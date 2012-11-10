@@ -13,7 +13,7 @@ BuildRequires:  gobject-introspection-devel
 BuildRequires:  gettext-devel
 BuildRequires:  libjpeg8-devel
 BuildRequires:  libtiff-devel
-BuildRequires:  openjpeg-devel
+#BuildRequires:  openjpeg-devel
 BuildRequires:  update-desktop-files
 BuildRequires:  zlib-devel
 BuildRequires:  pkgconfig(cairo) >= 1.10.0
