@@ -1,5 +1,7 @@
 %define poppler_data_version 0.2.1
 %define full_iconv 0
+%bcond_with introspection
+
 Name:           poppler
 Version:        0.20.4
 Release:        1
@@ -9,7 +11,9 @@ License:        GPL-2.0+
 Group:          System/Libraries
 Source:         http://poppler.freedesktop.org/%{name}-%{version}.tar.gz
 BuildRequires:  gcc-c++
+%if %{with introspection} 
 BuildRequires:  gobject-introspection-devel
+%endif
 BuildRequires:  gettext-devel
 BuildRequires:  libjpeg8-devel
 BuildRequires:  libtiff-devel
@@ -110,7 +114,9 @@ Summary:        PDF rendering library - GLib Wrapper
 License:        GPL-2.0
 Group:          Development/Libraries/C and C++
 Requires:       libpoppler-glib = %{version}
+%if %{with introspection} 
 Requires:       typelib-Poppler = %{version}
+%endif
 Provides:       poppler-glib-devel = %{version}
 Obsoletes:      poppler-glib-devel < %{version}
 
@@ -157,9 +163,11 @@ make %{?_smp_mflags}
 %defattr (-, root, root)
 %{_libdir}/libpoppler-glib.so.*
 
+%if %{with introspection} 
 %files -n typelib-Poppler
 %defattr (-, root, root)
 %{_libdir}/girepository-1.0/Poppler-0.18.typelib
+%endif
 
 %files tools
 %defattr (-, root, root)
@@ -190,5 +198,7 @@ make %{?_smp_mflags}
 %{_includedir}/poppler/glib
 %{_libdir}/libpoppler-glib.so
 %{_libdir}/pkgconfig/poppler-glib.pc
+%if %{with introspection} 
 %{_datadir}/gir-1.0/Poppler-0.18.gir
+%endif
 %doc %{_datadir}/gtk-doc/html/poppler/
