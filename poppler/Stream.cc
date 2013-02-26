@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Jeff Muizelaar <jeff@infidigm.net>
-// Copyright (C) 2006-2010, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2010, 2012, 2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2008 Julien Rebetez <julien@fhtagn.net>
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
@@ -25,6 +25,8 @@
 // Copyright (C) 2011, 2012 William Bader <williambader@hotmail.com>
 // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012 Oliver Sander <sander@mi.fu-berlin.de>
+// Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
+// Copyright (C) 2012 Even Rouault <even.rouault@mines-paris.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -418,11 +420,11 @@ ImageStream::ImageStream(Stream *strA, int widthA, int nCompsA, int nBitsA) {
 
   nVals = width * nComps;
   inputLineSize = (nVals * nBits + 7) >> 3;
-  if (nVals > INT_MAX / nBits - 7) {
+  if (nBits <= 0 || nVals > INT_MAX / nBits - 7) {
     // force a call to gmallocn(-1,...), which will throw an exception
     inputLineSize = -1;
   }
-  inputLine = (Guchar *)gmallocn(inputLineSize, sizeof(char));
+  inputLine = (Guchar *)gmallocn_checkoverflow(inputLineSize, sizeof(char));
   if (nBits == 8) {
     imgLine = (Guchar *)inputLine;
   } else {
@@ -1707,11 +1709,12 @@ int CCITTFaxStream::lookChar() {
 
     // 2-D encoding
     if (nextLine2D) {
-      for (i = 0; codingLine[i] < columns; ++i) {
+      for (i = 0; i < columns && codingLine[i] < columns; ++i) {
 	refLine[i] = codingLine[i];
       }
-      refLine[i++] = columns;
-      refLine[i] = columns;
+      for (; i < columns + 2; ++i) {
+	refLine[i] = columns;
+      }
       codingLine[0] = 0;
       a0i = 0;
       b1i = 0;
@@ -1723,7 +1726,7 @@ int CCITTFaxStream::lookChar() {
       //   codingLine[a0i = 0] = refLine[b1i = 0] = 0 is possible
       // exception at right edge:
       //   refLine[b1i] = refLine[b1i+1] = columns is possible
-      while (codingLine[a0i] < columns) {
+      while (codingLine[a0i] < columns && !err) {
 	code1 = getTwoDimCode();
 	switch (code1) {
 	case twoDimPass:
@@ -1757,49 +1760,109 @@ int CCITTFaxStream::lookChar() {
 	  }
 	  while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < columns) {
 	    b1i += 2;
+	    if (unlikely(b1i > columns + 1)) {
+	      error(errSyntaxError, getPos(),
+		"Bad 2D code {0:04x} in CCITTFax stream", code1);
+	      err = gTrue;
+	      break;
+	    }
 	  }
 	  break;
 	case twoDimVertR3:
+	  if (unlikely(b1i > columns + 1)) {
+	    error(errSyntaxError, getPos(),
+	      "Bad 2D code {0:04x} in CCITTFax stream", code1);
+	    err = gTrue;
+	    break;
+	  }
 	  addPixels(refLine[b1i] + 3, blackPixels);
 	  blackPixels ^= 1;
 	  if (codingLine[a0i] < columns) {
 	    ++b1i;
 	    while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < columns) {
 	      b1i += 2;
+	      if (unlikely(b1i > columns + 1)) {
+		error(errSyntaxError, getPos(),
+		  "Bad 2D code {0:04x} in CCITTFax stream", code1);
+		err = gTrue;
+		break;
+	      }
 	    }
 	  }
 	  break;
 	case twoDimVertR2:
+	  if (unlikely(b1i > columns + 1)) {
+	    error(errSyntaxError, getPos(),
+	      "Bad 2D code {0:04x} in CCITTFax stream", code1);
+	    err = gTrue;
+	    break;
+	  }
 	  addPixels(refLine[b1i] + 2, blackPixels);
 	  blackPixels ^= 1;
 	  if (codingLine[a0i] < columns) {
 	    ++b1i;
 	    while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < columns) {
 	      b1i += 2;
+	      if (unlikely(b1i > columns + 1)) {
+		error(errSyntaxError, getPos(),
+		  "Bad 2D code {0:04x} in CCITTFax stream", code1);
+		err = gTrue;
+		break;
+	      }
 	    }
 	  }
 	  break;
 	case twoDimVertR1:
+	  if (unlikely(b1i > columns + 1)) {
+	    error(errSyntaxError, getPos(),
+	      "Bad 2D code {0:04x} in CCITTFax stream", code1);
+	    err = gTrue;
+	    break;
+	  }
 	  addPixels(refLine[b1i] + 1, blackPixels);
 	  blackPixels ^= 1;
 	  if (codingLine[a0i] < columns) {
 	    ++b1i;
 	    while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < columns) {
 	      b1i += 2;
+	      if (unlikely(b1i > columns + 1)) {
+		error(errSyntaxError, getPos(),
+		  "Bad 2D code {0:04x} in CCITTFax stream", code1);
+		err = gTrue;
+		break;
+	      }
 	    }
 	  }
 	  break;
 	case twoDimVert0:
+	  if (unlikely(b1i > columns + 1)) {
+	    error(errSyntaxError, getPos(),
+	      "Bad 2D code {0:04x} in CCITTFax stream", code1);
+	    err = gTrue;
+	    break;
+	  }
 	  addPixels(refLine[b1i], blackPixels);
 	  blackPixels ^= 1;
 	  if (codingLine[a0i] < columns) {
 	    ++b1i;
 	    while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < columns) {
 	      b1i += 2;
+	      if (unlikely(b1i > columns + 1)) {
+		error(errSyntaxError, getPos(),
+		  "Bad 2D code {0:04x} in CCITTFax stream", code1);
+		err = gTrue;
+		break;
+	      }
 	    }
 	  }
 	  break;
 	case twoDimVertL3:
+	  if (unlikely(b1i > columns + 1)) {
+	    error(errSyntaxError, getPos(),
+	      "Bad 2D code {0:04x} in CCITTFax stream", code1);
+	    err = gTrue;
+	    break;
+	  }
 	  addPixelsNeg(refLine[b1i] - 3, blackPixels);
 	  blackPixels ^= 1;
 	  if (codingLine[a0i] < columns) {
@@ -1810,10 +1873,22 @@ int CCITTFaxStream::lookChar() {
 	    }
 	    while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < columns) {
 	      b1i += 2;
+	      if (unlikely(b1i > columns + 1)) {
+		error(errSyntaxError, getPos(),
+		  "Bad 2D code {0:04x} in CCITTFax stream", code1);
+		err = gTrue;
+		break;
+	      }
 	    }
 	  }
 	  break;
 	case twoDimVertL2:
+	  if (unlikely(b1i > columns + 1)) {
+	    error(errSyntaxError, getPos(),
+	      "Bad 2D code {0:04x} in CCITTFax stream", code1);
+	    err = gTrue;
+	    break;
+	  }
 	  addPixelsNeg(refLine[b1i] - 2, blackPixels);
 	  blackPixels ^= 1;
 	  if (codingLine[a0i] < columns) {
@@ -1824,10 +1899,22 @@ int CCITTFaxStream::lookChar() {
 	    }
 	    while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < columns) {
 	      b1i += 2;
+	      if (unlikely(b1i > columns + 1)) {
+	        error(errSyntaxError, getPos(),
+		  "Bad 2D code {0:04x} in CCITTFax stream", code1);
+	        err = gTrue;
+	        break;
+	      }
 	    }
 	  }
 	  break;
 	case twoDimVertL1:
+	  if (unlikely(b1i > columns + 1)) {
+	    error(errSyntaxError, getPos(),
+	      "Bad 2D code {0:04x} in CCITTFax stream", code1);
+	    err = gTrue;
+	    break;
+	  }
 	  addPixelsNeg(refLine[b1i] - 1, blackPixels);
 	  blackPixels ^= 1;
 	  if (codingLine[a0i] < columns) {
@@ -1838,6 +1925,12 @@ int CCITTFaxStream::lookChar() {
 	    }
 	    while (refLine[b1i] <= codingLine[a0i] && refLine[b1i] < columns) {
 	      b1i += 2;
+	      if (unlikely(b1i > columns + 1)) {
+		error(errSyntaxError, getPos(),
+		  "Bad 2D code {0:04x} in CCITTFax stream", code1);
+		err = gTrue;
+		break;
+	      }
 	    }
 	  }
 	  break;
@@ -2021,6 +2114,12 @@ int CCITTFaxStream::lookChar() {
 	outputBits = 0;
 	if (codingLine[a0i] < columns) {
 	  ++a0i;
+	  if (unlikely(a0i > columns)) {
+	    error(errSyntaxError, getPos(),
+	      "Bad bits {0:04x} in CCITTFax stream", bits);
+	      err = gTrue;
+	      break;
+	  }
 	  outputBits = codingLine[a0i] - codingLine[a0i - 1];
 	} else if (bits > 0) {
 	  buf <<= bits;
@@ -2288,7 +2387,8 @@ GBool CCITTFaxStream::isBinary(GBool last) {
 
 // clip [-256,511] --> [0,255]
 #define dctClipOffset 256
-static Guchar dctClip[768];
+#define dctClipLength 768
+static Guchar dctClip[dctClipLength];
 static int dctClipInit = 0;
 
 // zig zag decode map
@@ -3244,7 +3344,12 @@ void DCTStream::transformDataUnit(Gushort *quantTable,
 
   // convert to 8-bit integers
   for (i = 0; i < 64; ++i) {
-    dataOut[i] = dctClip[dctClipOffset + 128 + ((dataIn[i] + 8) >> 4)];
+    const int ix = dctClipOffset + 128 + ((dataIn[i] + 8) >> 4);
+    if (unlikely(ix < 0 || ix >= dctClipLength)) {
+      dataOut[i] = 0;
+    } else {
+      dataOut[i] = dctClip[ix];
+    }
   }
 }
 
@@ -4399,7 +4504,12 @@ FlateStream::~FlateStream() {
   delete str;
 }
 
-void FlateStream::unfilteredReset() {
+void FlateStream::flateReset(GBool unfiltered) {
+  if (unfiltered)
+    str->unfilteredReset();
+  else
+    str->reset();
+
   index = 0;
   remain = 0;
   codeBuf = 0;
@@ -4407,14 +4517,16 @@ void FlateStream::unfilteredReset() {
   compressedBlock = gFalse;
   endOfBlock = gTrue;
   eof = gTrue;
+}
 
-  str->reset();
+void FlateStream::unfilteredReset() {
+  flateReset(gTrue);
 }
 
 void FlateStream::reset() {
   int cmf, flg;
 
-  unfilteredReset();
+  flateReset(gFalse);
 
   // read header
   //~ need to look at window size?

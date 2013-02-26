@@ -8,6 +8,7 @@ and/or use gtk-doc annotations.  -->
             xmlns:glib="http://www.gtk.org/introspection/glib/1.0">
   <include name="GLib" version="2.0"/>
   <include name="GObject" version="2.0"/>
+  <include name="Gio" version="2.0"/>
   <include name="cairo" version="1.0"/>
   <package name="poppler-glib"/>
   <c:include name="poppler.h"/>
@@ -428,6 +429,21 @@ replacing the current contents.</doc>
           <parameter name="contents" transfer-ownership="none">
             <doc xml:whitespace="preserve">a text string containing the new contents</doc>
             <type name="utf8" c:type="const gchar*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="set_flags"
+              c:identifier="poppler_annot_set_flags"
+              version="0.22">
+        <doc xml:whitespace="preserve">Sets the flag field specifying various characteristics of the
+@poppler_annot.</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="flags" transfer-ownership="none">
+            <doc xml:whitespace="preserve">a #PopplerAnnotFlag</doc>
+            <type name="AnnotFlag" c:type="PopplerAnnotFlag"/>
           </parameter>
         </parameters>
       </method>
@@ -1404,6 +1420,68 @@ domains.</doc>
           </parameter>
         </parameters>
       </constructor>
+      <constructor name="new_from_gfile"
+                   c:identifier="poppler_document_new_from_gfile"
+                   version="0.22"
+                   throws="1">
+        <doc xml:whitespace="preserve">Creates a new #PopplerDocument reading the PDF contents from @file.
+Possible errors include those in the #POPPLER_ERROR and #G_FILE_ERROR
+domains.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:whitespace="preserve">a new #PopplerDocument, or %NULL</doc>
+          <type name="Document" c:type="PopplerDocument*"/>
+        </return-value>
+        <parameters>
+          <parameter name="file" transfer-ownership="none">
+            <doc xml:whitespace="preserve">a #GFile to load</doc>
+            <type name="Gio.File" c:type="GFile*"/>
+          </parameter>
+          <parameter name="password" transfer-ownership="none" allow-none="1">
+            <doc xml:whitespace="preserve">password to unlock the file with, or %NULL</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="cancellable"
+                     transfer-ownership="none"
+                     allow-none="1">
+            <doc xml:whitespace="preserve">a #GCancellable, or %NULL</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </constructor>
+      <constructor name="new_from_stream"
+                   c:identifier="poppler_document_new_from_stream"
+                   version="0.22"
+                   throws="1">
+        <doc xml:whitespace="preserve">Creates a new #PopplerDocument reading the PDF contents from @stream.
+Note that the given #GInputStream must be seekable or %G_IO_ERROR_NOT_SUPPORTED
+will be returned.
+Possible errors include those in the #POPPLER_ERROR and #G_FILE_ERROR
+domains.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:whitespace="preserve">a new #PopplerDocument, or %NULL</doc>
+          <type name="Document" c:type="PopplerDocument*"/>
+        </return-value>
+        <parameters>
+          <parameter name="stream" transfer-ownership="none">
+            <doc xml:whitespace="preserve">a #GInputStream to read from</doc>
+            <type name="Gio.InputStream" c:type="GInputStream*"/>
+          </parameter>
+          <parameter name="length" transfer-ownership="none">
+            <doc xml:whitespace="preserve">the stream length, or -1 if not known</doc>
+            <type name="gint64" c:type="goffset"/>
+          </parameter>
+          <parameter name="password" transfer-ownership="none" allow-none="1">
+            <doc xml:whitespace="preserve">password to unlock the file with, or %NULL</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="cancellable"
+                     transfer-ownership="none"
+                     allow-none="1">
+            <doc xml:whitespace="preserve">a #GCancellable, or %NULL</doc>
+            <type name="Gio.Cancellable" c:type="GCancellable*"/>
+          </parameter>
+        </parameters>
+      </constructor>
       <method name="find_dest" c:identifier="poppler_document_find_dest">
         <doc xml:whitespace="preserve">Finds named destination @link_name in @document</doc>
         <return-value transfer-ownership="full">
@@ -1829,6 +1907,29 @@ include those in the #G_FILE_ERROR domain.</doc>
         </return-value>
       </function>
     </enumeration>
+    <bitfield name="FindFlags"
+              version="0.22"
+              glib:type-name="PopplerFindFlags"
+              glib:get-type="poppler_find_flags_get_type"
+              c:type="PopplerFindFlags">
+      <doc xml:whitespace="preserve">Flags using while searching text in a page</doc>
+      <member name="default"
+              value="0"
+              c:identifier="POPPLER_FIND_DEFAULT"
+              glib:nick="default"/>
+      <member name="case_sensitive"
+              value="1"
+              c:identifier="POPPLER_FIND_CASE_SENSITIVE"
+              glib:nick="case-sensitive"/>
+      <member name="backwards"
+              value="2"
+              c:identifier="POPPLER_FIND_BACKWARDS"
+              glib:nick="backwards"/>
+      <member name="whole_words_only"
+              value="4"
+              c:identifier="POPPLER_FIND_WHOLE_WORDS_ONLY"
+              glib:nick="whole-words-only"/>
+    </bitfield>
     <class name="FontInfo"
            c:symbol-prefix="font_info"
            c:type="PopplerFontInfo"
@@ -2748,10 +2849,10 @@ of @action on the page</doc>
     <constant name="MAJOR_VERSION" value="0" c:type="POPPLER_MAJOR_VERSION">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MICRO_VERSION" value="4" c:type="POPPLER_MICRO_VERSION">
+    <constant name="MICRO_VERSION" value="1" c:type="POPPLER_MICRO_VERSION">
       <type name="gint" c:type="gint"/>
     </constant>
-    <constant name="MINOR_VERSION" value="20" c:type="POPPLER_MINOR_VERSION">
+    <constant name="MINOR_VERSION" value="22" c:type="POPPLER_MINOR_VERSION">
       <type name="gint" c:type="gint"/>
     </constant>
     <class name="Media"
@@ -3117,7 +3218,8 @@ poppler_page_get_text_attributes().</doc>
         </parameters>
       </method>
       <method name="find_text" c:identifier="poppler_page_find_text">
-        <doc xml:whitespace="preserve">A #GList of rectangles for each occurance of the text on the page.
+        <doc xml:whitespace="preserve">Finds @text in @page with the default options (%POPPLER_FIND_DEFAULT) and
+returns a #GList of rectangles for each occurance of the text on the page.
 The coordinates are in PDF points.</doc>
         <return-value transfer-ownership="full">
           <doc xml:whitespace="preserve">a #GList of #PopplerRectangle,</doc>
@@ -3129,6 +3231,29 @@ The coordinates are in PDF points.</doc>
           <parameter name="text" transfer-ownership="none">
             <doc xml:whitespace="preserve">the text to search for (UTF-8 encoded)</doc>
             <type name="utf8" c:type="const char*"/>
+          </parameter>
+        </parameters>
+      </method>
+      <method name="find_text_with_options"
+              c:identifier="poppler_page_find_text_with_options"
+              version="0.22">
+        <doc xml:whitespace="preserve">Finds @text in @page with the given #PopplerFindFlags options and
+returns a #GList of rectangles for each occurance of the text on the page.
+The coordinates are in PDF points.</doc>
+        <return-value transfer-ownership="full">
+          <doc xml:whitespace="preserve">a #GList of #PopplerRectangle,</doc>
+          <type name="GLib.List" c:type="GList*">
+            <type name="Rectangle"/>
+          </type>
+        </return-value>
+        <parameters>
+          <parameter name="text" transfer-ownership="none">
+            <doc xml:whitespace="preserve">the text to search for (UTF-8 encoded)</doc>
+            <type name="utf8" c:type="const char*"/>
+          </parameter>
+          <parameter name="options" transfer-ownership="none">
+            <doc xml:whitespace="preserve">find options</doc>
+            <type name="FindFlags" c:type="PopplerFindFlags"/>
           </parameter>
         </parameters>
       </method>
@@ -3427,6 +3552,20 @@ appropriate thumbnail exists.</doc>
           <doc xml:whitespace="preserve">a #PopplerPageTransition or %NULL.</doc>
           <type name="PageTransition" c:type="PopplerPageTransition*"/>
         </return-value>
+      </method>
+      <method name="remove_annot"
+              c:identifier="poppler_page_remove_annot"
+              version="0.22">
+        <doc xml:whitespace="preserve">Removes annotation @annot from @page</doc>
+        <return-value transfer-ownership="none">
+          <type name="none" c:type="void"/>
+        </return-value>
+        <parameters>
+          <parameter name="annot" transfer-ownership="none">
+            <doc xml:whitespace="preserve">a #PopplerAnnot to remove</doc>
+            <type name="Annot" c:type="PopplerAnnot*"/>
+          </parameter>
+        </parameters>
       </method>
       <method name="render" c:identifier="poppler_page_render">
         <doc xml:whitespace="preserve">Render the page to the given cairo context. This function

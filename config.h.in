@@ -91,6 +91,9 @@
 /* Define if you have POSIX threads libraries and header files. */
 #undef HAVE_PTHREAD
 
+/* Defines if rand_r is available on your system */
+#undef HAVE_RAND_R
+
 /* Use splash for rendering. */
 #undef HAVE_SPLASH
 
