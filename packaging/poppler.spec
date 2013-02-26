@@ -3,7 +3,7 @@
 %bcond_with introspection
 
 Name:           poppler
-Version:        0.20.4
+Version:        0.22.1
 Release:        1
 Url:            http://poppler.freedesktop.org/
 Summary:        PDF Rendering Library
@@ -17,7 +17,6 @@ BuildRequires:  gobject-introspection-devel
 BuildRequires:  gettext-devel
 BuildRequires:  libjpeg8-devel
 BuildRequires:  libtiff-devel
-#BuildRequires:  openjpeg-devel
 BuildRequires:  update-desktop-files
 BuildRequires:  zlib-devel
 BuildRequires:  pkgconfig(cairo) >= 1.10.0
@@ -28,9 +27,8 @@ BuildRequires:  pkgconfig(cairo-svg)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(gobject-2.0) >= 2.18
-#BuildRequires:  pkgconfig(lcms2)
+BuildRequires:  pkgconfig(lcms2)
 BuildRequires:  pkgconfig(libpng)
-BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 
 %description
 Poppler is a PDF rendering library, forked from the xpdf PDF viewer
@@ -40,9 +38,6 @@ developed by Derek Noonburg of Glyph and Cog, LLC.
 Summary:        PDF Rendering Library
 License:        GPL-2.0
 Group:          System/Libraries
-Recommends:     poppler-data >= %{poppler_data_version}
-Provides:       poppler = %{version}
-Obsoletes:      poppler < %{version}
 
 %description -n libpoppler
 Poppler is a PDF rendering library, forked from the xpdf PDF viewer
@@ -64,8 +59,6 @@ Summary:        PDF Rendering Library - GLib Wrapper
 License:        GPL-2.0+
 Group:          System/Libraries
 Requires:       libpoppler >= %{version}
-Provides:       poppler-glib = %{version}
-Obsoletes:      poppler-glib < %{version}
 
 %description -n libpoppler-glib
 Poppler is a PDF rendering library, forked from the xpdf PDF viewer
@@ -86,11 +79,8 @@ This package provides the GObject Introspection bindings for Poppler.
 %package tools
 Summary:        PDF Rendering Library Tools
 License:        GPL-2.0
-Group:          Productivity/Publishing/PDF
+Group:          Development/Tools
 Requires:       libpoppler >= %{version}
-Provides:       xpdf-tools = 3.02
-Obsoletes:      xpdf-tools < 3.02
-Provides:       pdftools_any
 
 %description tools
 Poppler is a PDF rendering library, forked from the xpdf PDF viewer
@@ -99,11 +89,9 @@ developed by Derek Noonburg of Glyph and Cog, LLC.
 %package -n libpoppler-devel
 Summary:        PDF rendering library
 License:        GPL-2.0
-Group:          Development/Libraries/C and C++
+Group:          Development/Libraries
 Requires:       libpoppler = %{version}
 Requires:       libstdc++-devel
-Provides:       poppler-devel = %{version}
-Obsoletes:      poppler-devel < %{version}
 
 %description -n libpoppler-devel
 Poppler is a PDF rendering library, forked from the xpdf PDF viewer
@@ -112,13 +100,11 @@ developed by Derek Noonburg of Glyph and Cog, LLC.
 %package -n libpoppler-glib-devel
 Summary:        PDF rendering library - GLib Wrapper
 License:        GPL-2.0
-Group:          Development/Libraries/C and C++
+Group:          Development/Libraries
 Requires:       libpoppler-glib = %{version}
 %if %{with introspection} 
 Requires:       typelib-Poppler = %{version}
 %endif
-Provides:       poppler-glib-devel = %{version}
-Obsoletes:      poppler-glib-devel < %{version}
 
 %description -n libpoppler-glib-devel
 Poppler is a PDF rendering library, forked from the xpdf PDF viewer
