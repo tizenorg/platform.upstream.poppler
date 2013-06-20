@@ -1,5 +1,5 @@
 %define poppler_data_version 0.2.1
-%define full_iconv 0
+%define full_iconv 1
 %bcond_with introspection
 
 Name:           poppler
