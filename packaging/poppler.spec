@@ -10,6 +10,7 @@ Summary:        PDF Rendering Library
 License:        GPL-2.0+
 Group:          System/Libraries
 Source:         http://poppler.freedesktop.org/%{name}-%{version}.tar.gz
+Source1001: 	poppler.manifest
 BuildRequires:  gcc-c++
 %if %{with introspection} 
 BuildRequires:  gobject-introspection-devel
@@ -112,6 +113,7 @@ developed by Derek Noonburg of Glyph and Cog, LLC.
 
 %prep
 %setup -q -n poppler-%{version}
+cp %{SOURCE1001} .
 
 %build
 autoreconf -fi
@@ -141,21 +143,25 @@ make %{?_smp_mflags}
 %endif 
 
 %files -n libpoppler
+%manifest %{name}.manifest
 %defattr (-, root, root)
 %doc AUTHORS COPYING ChangeLog NEWS README README-XPDF TODO
 %{_libdir}/libpoppler.so.*
 
 %files -n libpoppler-glib
+%manifest %{name}.manifest
 %defattr (-, root, root)
 %{_libdir}/libpoppler-glib.so.*
 
 %if %{with introspection} 
 %files -n typelib-Poppler
+%manifest %{name}.manifest
 %defattr (-, root, root)
 %{_libdir}/girepository-1.0/Poppler-0.18.typelib
 %endif
 
 %files tools
+%manifest %{name}.manifest
 %defattr (-, root, root)
 %doc COPYING
 %{_bindir}/*
@@ -163,11 +169,13 @@ make %{?_smp_mflags}
 
 %if %{full_iconv}
 %files -n libpoppler-cpp
+%manifest %{name}.manifest
 %defattr(-, root, root)
 %{_libdir}/libpoppler-cpp.so.*
 %endif 
 
 %files -n libpoppler-devel
+%manifest %{name}.manifest
 %defattr (-, root, root)
 %{_includedir}/poppler
 %exclude %{_includedir}/poppler/glib
@@ -180,6 +188,7 @@ make %{?_smp_mflags}
 %endif
 %{_libdir}/pkgconfig/poppler-splash.pc
 %files -n libpoppler-glib-devel
+%manifest %{name}.manifest
 %defattr (-, root, root)
 %{_includedir}/poppler/glib
 %{_libdir}/libpoppler-glib.so
