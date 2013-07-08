@@ -1,0 +1,8 @@
+Change-Id: Ifaa51908ba7dce5df8944da334df615bfe77191f
+Code-Review+2: Ryan Ware <ware@linux.intel.com>
+Verified+1: Ryan Ware <ware@linux.intel.com>
+Submitted-by: Ryan Ware <ware@linux.intel.com>
+Submitted-at: Mon, 08 Jul 2013 09:36:42 -0700
+Reviewed-on: https://review.tizen.org/gerrit/5287
+Project: platform/upstream/poppler
+Branch: refs/heads/tizen
