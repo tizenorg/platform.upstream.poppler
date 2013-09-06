@@ -1,3 +1,8 @@
+* Fri Sep 06 2013 Ossama Othman <ossama.othman@intel.com> accepted/tizen/20130710.215103@f64fd71
+- Tag COPYING license file with %license, not %doc.
+- poppler-cpp: Disable if full_iconv is disabled.  Fixes RPM build.
+- resetting manifest requested domain to floor
+
 * Tue Feb 26 2013 Anas Nashif <anas.nashif@intel.com> upstream/0.22.1@996af24
 - Update to 0.22.1
 
