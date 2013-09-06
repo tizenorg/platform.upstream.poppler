@@ -148,7 +148,8 @@ make %{?_smp_mflags}
 %files -n libpoppler
 %manifest %{name}.manifest
 %defattr (-, root, root)
-%doc AUTHORS COPYING ChangeLog NEWS README README-XPDF TODO
+%doc AUTHORS ChangeLog NEWS README README-XPDF TODO
+%license COPYING
 %{_libdir}/libpoppler.so.*
 
 %files -n libpoppler-glib
@@ -166,7 +167,7 @@ make %{?_smp_mflags}
 %files tools
 %manifest %{name}.manifest
 %defattr (-, root, root)
-%doc COPYING
+%license COPYING
 %{_bindir}/*
 %doc %{_mandir}/man1/*.*
 
