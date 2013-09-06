@@ -122,6 +122,9 @@ autoreconf -fi
 	--disable-static\
 	--enable-shared\
 	--enable-zlib \
+%if ! %{full_iconv}
+	--disable-poppler-cpp \
+%endif
         --disable-gtk-test
 make %{?_smp_mflags}
 
