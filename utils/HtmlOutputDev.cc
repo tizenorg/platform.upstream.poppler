@@ -17,7 +17,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2005-2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005-2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2008 Kjartan Maraas <kmaraas@gnome.org>
 // Copyright (C) 2008 Boris Toloknov <tlknv@yandex.ru>
 // Copyright (C) 2008 Haruyuki Kawabe <Haruyuki.Kawabe@unisys.co.jp>
@@ -34,6 +34,9 @@
 // Copyright (C) 2012 Ihar Filipau <thephilips@gmail.com>
 // Copyright (C) 2012 Gerald Schmidt <solahcin@gmail.com>
 // Copyright (C) 2012 Pino Toscano <pino@kde.org>
+// Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2013 Julien Nabet <serval2412@yahoo.fr>
+// Copyright (C) 2013 Johannes Brandstätter <jbrandstaetter@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1229,7 +1232,7 @@ HtmlOutputDev::~HtmlOutputDev() {
       delete pages;
 }
 
-void HtmlOutputDev::startPage(int pageNum, GfxState *state) {
+void HtmlOutputDev::startPage(int pageNum, GfxState *state, XRef *xref) {
 #if 0
   if (mode&&!xml){
     if (write){
@@ -1500,7 +1503,8 @@ void HtmlOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
   /*if( !globalParams->getErrQuiet() )
     printf("image stream of kind %d\n", str->getKind());*/
   // dump JPEG file
-  if (dumpJPEG && str->getKind() == strDCT) {
+  if (dumpJPEG && str->getKind() == strDCT && (colorMap->getNumPixelComps() == 1 ||
+	  colorMap->getNumPixelComps() == 3) && !inlineImg) {
     drawJpegImage(state, str);
   }
   else {
@@ -1699,9 +1703,9 @@ GBool HtmlOutputDev::dumpDocOutline(PDFDoc* doc)
 			GooString *str = Docname->copy();
 			str->append("-outline.html");
 			output = fopen(str->getCString(), "w");
+			delete str;
 			if (output == NULL)
 				return gFalse;
-			delete str;
 			bClose = gTrue;
 
 			GooString *htmlEncoding =
@@ -1795,7 +1799,7 @@ GBool HtmlOutputDev::newHtmlOutlineLevel(FILE *output, GooList *outlines, Catalo
 		atLeastOne = gTrue;
 
 		item->open();
-		if (item->hasKids())
+		if (item->hasKids() && item->getKids())
 		{
 			fputs("\n",output);
 			newHtmlOutlineLevel(output, item->getKids(), catalog, level+1);
@@ -1832,7 +1836,7 @@ void HtmlOutputDev::newXmlOutlineLevel(FILE *output, GooList *outlines, Catalog*
         delete titleStr;
 
         item->open();
-        if (item->hasKids())
+        if (item->hasKids() && item->getKids())
         {
             newXmlOutlineLevel(output, item->getKids(), catalog);
         }
