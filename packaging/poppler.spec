@@ -1,36 +1,37 @@
 %define _unpackaged_files_terminate_build 0
 %define full_iconv 0
 
-%define major 43
+%define major     46
 %define glibmajor 8
-%define qt4major 4
-%define cppmajor 0
-%define girmajor 0.18
+%define qt4major  4
+%define cppmajor  0
+%define girmajor  0.18
 
-%define libname		libpoppler
-%define libnameglib	libpoppler-glib
-%define libnameqt4	libpoppler-qt4
-%define libnamecpp	libpoppler-cpp
-%define libnamedev	libpoppler-devel
-%define libnameglibdev	libpoppler-glib-devel
-%define libnameqt4dev	libpoppler-qt4-devel
+%define libname         libpoppler
+%define libnameglib     libpoppler-glib
+%define libnameqt4      libpoppler-qt4
+%define libnamecpp      libpoppler-cpp
+%define libnamedev      libpoppler-devel
+%define libnameglibdev  libpoppler-glib-devel
+%define libnameqt4dev   libpoppler-qt4-devel
 %define libnamecppdev   libpoppler-cpp-devel
-%define libnamegir	libpoppler-gir
+%define libnamegir      libpoppler-gir
 
-Name:		poppler
-Summary: 	PDF rendering library
-Group:		System/Libraries
-Version:	0.24.1
-Release:	1
-License:	GPL-2.0+
-URL:		http://poppler.freedesktop.org
-Source:		%{name}-%{version}.tar.gz
-Source1001: libpoppler-cpp.manifest
-Source1002: libpoppler-glib.manifest
-Source1003: libpoppler.manifest
-Source1004: poppler-tools.manifest
+Name:           poppler
+Summary:        PDF rendering library
+Group:          Graphics & UI Framework/Imaging
+Version:        0.26.5
+Release:        0
+License:        GPL-2.0+
+URL:            http://poppler.freedesktop.org
 
-BuildRequires:	pkgconfig(cairo) >= 1.10.0
+Source:         %{name}-%{version}.tar.gz
+Source1001:     libpoppler-cpp.manifest
+Source1002:     libpoppler-glib.manifest
+Source1003:     libpoppler.manifest
+Source1004:     poppler-tools.manifest
+
+BuildRequires:  pkgconfig(cairo) >= 1.10.0
 BuildRequires:  pkgconfig(cairo-ft) >= 1.10.0
 BuildRequires:  pkgconfig(cairo-pdf)
 BuildRequires:  pkgconfig(cairo-ps)
@@ -39,12 +40,12 @@ BuildRequires:  pkgconfig(libpng)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(gobject-2.0) >= 2.18
-BuildRequires:	libjpeg-turbo-devel
-BuildRequires:	libtiff-devel
-BuildRequires:	zlib-devel
-BuildRequires:	curl-devel
-BuildRequires:	gettext-devel
-BuildRequires:	pkgconfig(lcms2)
+BuildRequires:  libjpeg-turbo-devel
+BuildRequires:  libtiff-devel
+BuildRequires:  zlib-devel
+BuildRequires:  curl-devel
+BuildRequires:  gettext-devel
+BuildRequires:  pkgconfig(lcms2)
 
 
 %description
@@ -54,46 +55,46 @@ developed by Derek Noonburg of Glyph and Cog, LLC.
 %package tools
 Summary:        PDF Rendering Library Tools
 License:        GPL-2.0
-Group:          Productivity/Publishing/PDF
+Group:          Graphics & UI Framework/Imaging
 Requires:       %{libname} >= %{version}
 # last version in openSUSE 11.1/SLE11
 Provides:       poppler-tools = %{version}
-Obsoletes:	xpdf-tools < 3.02-10mdv
-Provides:	xpdf-tools
-Obsoletes:	pdftohtml
-Provides:	pdftohtml
+Obsoletes:      xpdf-tools < 3.02-10mdv
+Provides:       xpdf-tools
+Obsoletes:      pdftohtml
+Provides:       pdftohtml
 
 %description tools
 Poppler is a PDF rendering library, forked from the xpdf PDF viewer
 developed by Derek Noonburg of Glyph and Cog, LLC.
 
 %package -n %{libname}
-Summary:	PDF rendering library
+Summary:        PDF rendering library
 License:        GPL-2.0
-Group:          System/Libraries
-Provides:	poppler = %{version}
-Conflicts:	%{_lib}poppler12
-#Suggests:	poppler-data
+Group:          Graphics & UI Framework/Imaging
+Provides:       poppler = %{version}
+Conflicts:      %{_lib}poppler12
+#Suggests:      poppler-data
 
 %description -n %{libname}
 Poppler is a PDF rendering library based on the xpdf-3.0 code base.
 
 %package -n %{libnamedev}
-Summary:	Development files for %{name}
+Summary:        Development files for %{name}
 License:        GPL-2.0
-Group:		Development/C++
-Provides:	%{name}-devel = %{version}-%{release}
-Requires:	%{libname} = %{version}-%{release}
-Obsoletes:	%{libname}-devel
+Group:          Graphics & UI Framework/Imaging
+Provides:       %{name}-devel = %{version}-%{release}
+Requires:       %{libname} = %{version}-%{release}
+Obsoletes:      %{libname}-devel
 
 %description -n %{libnamedev}
-Development files for %{name}
+Development files for %{name} package
 
 %if %{full_iconv}
 %package -n %{libnamecpp}
-Summary:	PDF rendering library - C++ backend
-Group:          System/Libraries
-Provides:	poppler-cpp = %{version}
+Summary:        PDF rendering library - C++ backend
+Group:          Graphics & UI Framework/Imaging
+Provides:       poppler-cpp = %{version}
 
 %description -n %{libnamecpp}
 Poppler is a PDF rendering library based on the xpdf-3.0 code base.
@@ -101,35 +102,35 @@ This is the C++ backend version.
 %endif
 
 %package -n %{libnameglib}
-Summary:	PDF rendering library - glib binding
+Summary:        PDF rendering library - glib binding
 License:        GPL-2.0+
-Group:          System/Libraries
+Group:          Graphics & UI Framework/Imaging
 Provides:       poppler-glib = %{version}
-Conflicts:	%{libname} < %{version}-%{release}
+Conflicts:      %{libname} < %{version}-%{release}
 
 %description -n %{libnameglib}
 Poppler is a PDF rendering library based on the xpdf-3.0 code base.
 
 %package -n %{libnameglibdev}
-Summary:	Development files for %{name}'s glib binding
+Summary:        Development files for %{name}'s glib binding
 License:        GPL-2.0
-Group:		Development/C++
-Provides:	%{name}-glib-devel = %{version}-%{release}
-Requires:	%{libnameglib} = %{version}
-Requires:	%{libnamedev} = %{version}
-Conflicts:	%{libnamedev} < %{version}-%{release}
-Obsoletes:	%{libnameglib}-devel
+Group:          Graphics & UI Framework/Imaging
+Provides:       %{name}-glib-devel = %{version}-%{release}
+Requires:       %{libnameglib} = %{version}
+Requires:       %{libnamedev} = %{version}
+Conflicts:      %{libnamedev} < %{version}-%{release}
+Obsoletes:      %{libnameglib}-devel
 
 %description -n %{libnameglibdev}
-Development files for %{name}'s glib binding.
+Development files for %{name}'s glib binding package.
 
 %if %{full_iconv}
 %package -n %{libnamecppdev}
-Summary:	Development files for %{name}-cpp
-Group:		Development/C++
-Provides:	%{name}-cpp-devel = %{version}-%{release}
-Requires:	%{libnamecpp} = %{version}
-Requires:	%{libnamedev} = %{version}
+Summary:        Development files for %{name}-cpp
+Group:          Graphics & UI Framework/Imaging
+Provides:       %{name}-cpp-devel = %{version}-%{release}
+Requires:       %{libnamecpp} = %{version}
+Requires:       %{libnamedev} = %{version}
 
 %description -n %{libnamecppdev}
 Development files for %{name}-cpp.
@@ -144,11 +145,18 @@ cp %{SOURCE1004} .
 
 %build
 %configure \
-    --prefix=/usr --localstatedir=/opt/var --sysconfdir=/opt/etc --datarootdir=/usr/share \
-    --enable-shared --disable-static \
-    --enable-libjpeg --disable-libopenjpeg --enable-libtiff \
+    --prefix=%{_prefix} \
+    --localstatedir=/opt/var \
+    --sysconfdir=/opt/etc \
+    --datarootdir=%{_datadir} \
+    --enable-shared \
+    --disable-static \
+    --enable-libjpeg  \
+    --disable-libopenjpeg \
+    --enable-libtiff \
     --enable-largefile \
-    --enable-zlib --disable-libcurl \
+    --enable-zlib \
+    --disable-libcurl \
     --enable-libpng \
     --enable-cairo-output \
     --enable-splash-output \
@@ -157,27 +165,32 @@ cp %{SOURCE1004} .
     --disable-poppler-cpp \
 %endif
     --enable-introspection=auto \
-    --disable-gtk-doc --disable-gtk-doc-html --disable-gtk-doc-pdf \
-    --disable-poppler-qt4 --disable-poppler-qt5 \
+    --disable-gtk-doc \
+    --disable-gtk-doc-html \
+    --disable-gtk-doc-pdf \
+    --disable-poppler-qt4 \
+    --disable-poppler-qt5 \
     --disable-gtk-test \
     --enable-xpdf-headers \
     --enable-compile-warnings=yes \
-    --enable-cms=lcms2 --without-x --with-font-configuration=fontconfig
+    --enable-cms=lcms2 \
+    --without-x \
+    --with-font-configuration=fontconfig
 
-make %{?_smp_mflags}
+%__make %{?_smp_mflags}
 
 %install
 %makeinstall
 %{__cp} -a config.h %{buildroot}%{_includedir}/poppler/
 
 rm %{buildroot}%{_libdir}/*.la
-mkdir -p %{buildroot}/usr/share/license
-cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}/usr/share/license/%{libname}
+mkdir -p %{buildroot}%{_datadir}/license
+cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}%{_datadir}/license/%{libname}
 %if %{full_iconv}
-cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}/usr/share/license/%{libnamecpp}
+cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}%{_datadir}/license/%{libnamecpp}
 %endif
-cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}/usr/share/license/%{libnameglib}
-cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}/usr/share/license/poppler-tools
+cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}%{_datadir}/license/%{libnameglib}
+cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}%{_datadir}/license/poppler-tools
 
 
 %post -n libpoppler -p /sbin/ldconfig
@@ -190,7 +203,7 @@ cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}/usr/share/license/poppler-to
 
 %files -n poppler-tools
 %manifest poppler-tools.manifest
-/usr/share/license/poppler-tools
+%{_datadir}/license/poppler-tools
 %exclude %{_bindir}/pdfdetach
 %exclude %{_bindir}/pdffonts
 %exclude %{_bindir}/pdfimages
@@ -206,7 +219,7 @@ cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}/usr/share/license/poppler-to
 
 %files -n %{libname}
 %manifest libpoppler.manifest
-/usr/share/license/%{libname}
+%{_datadir}/license/%{libname}
 %{_libdir}/libpoppler.so.%{major}*
 
 %files -n %{libnamedev}
@@ -225,7 +238,7 @@ cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}/usr/share/license/poppler-to
 
 %files -n %{libnameglib}
 %manifest libpoppler-glib.manifest
-/usr/share/license/%{libnameglib}
+%{_datadir}/license/%{libnameglib}
 %{_libdir}/libpoppler-glib.so.%{glibmajor}*
 
 %files -n %{libnameglibdev}
@@ -236,7 +249,7 @@ cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}/usr/share/license/poppler-to
 %if %{full_iconv}
 %files -n %{libnamecpp}
 %manifest libpoppler-cpp.manifest
-/usr/share/license/%{libnamecpp}
+%{_datadir}/license/%{libnamecpp}
 %{_libdir}/libpoppler-cpp.so.%{cppmajor}*
 
 %files -n %{libnamecppdev}
@@ -244,5 +257,3 @@ cp %{_builddir}/%{buildsubdir}/COPYING %{buildroot}/usr/share/license/poppler-to
 %{_libdir}/pkgconfig/poppler-cpp.pc
 %{_includedir}/poppler/cpp
 %endif
-
-
