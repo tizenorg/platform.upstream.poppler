@@ -17,8 +17,8 @@ include(CheckFileOffsetBits)
 CHECK_FILE_OFFSET_BITS()
 
 set(POPPLER_MAJOR_VERSION "0")
-set(POPPLER_MINOR_VERSION "24")
-set(POPPLER_MICRO_VERSION "1")
+set(POPPLER_MINOR_VERSION "26")
+set(POPPLER_MICRO_VERSION "5")
 set(POPPLER_VERSION "${POPPLER_MAJOR_VERSION}.${POPPLER_MINOR_VERSION}.${POPPLER_MICRO_VERSION}")
 
 # command line switches
@@ -86,7 +86,7 @@ set(OPI_SUPPORT ON)
 set(TEXTOUT_WORD_LIST ON)
 
 # setting the minimum required versions for some components
-set(QT4_MIN_VERSION "4.4.0")
+set(QT4_MIN_VERSION "4.7.0")
 set(CAIRO_VERSION "1.10.0")
 set(GLIB_REQUIRED "2.18")
 
@@ -264,6 +264,7 @@ set(poppler_SRCS
   goo/GooString.cc
   goo/gmem.cc
   goo/FixedPoint.cc
+  goo/NetPBMWriter.cc
   goo/PNGWriter.cc
   goo/TiffWriter.cc
   goo/JpegWriter.cc
@@ -304,6 +305,7 @@ set(poppler_SRCS
   poppler/Link.cc
   poppler/Linearization.cc
   poppler/LocalPDFDocBuilder.cc
+  poppler/MarkedContentOutputDev.cc
   poppler/NameToCharCode.cc
   poppler/Object.cc
   poppler/OptionalContent.cc
@@ -320,6 +322,8 @@ set(poppler_SRCS
   poppler/PreScanOutputDev.cc
   poppler/PSTokenizer.cc
   poppler/Stream.cc
+  poppler/StructTreeRoot.cc
+  poppler/StructElement.cc
   poppler/strtok_r.cpp
   poppler/UnicodeMap.cc
   poppler/UnicodeTypeTable.cc
@@ -423,7 +427,7 @@ add_library(poppler STATIC ${poppler_SRCS})
 else(MSVC)
 add_library(poppler SHARED ${poppler_SRCS})
 endif(MSVC)
-set_target_properties(poppler PROPERTIES VERSION 43.0.0 SOVERSION 43)
+set_target_properties(poppler PROPERTIES VERSION 46.0.0 SOVERSION 46)
 target_link_libraries(poppler ${poppler_LIBS})
 target_link_libraries(poppler LINK_INTERFACE_LIBRARIES "")
 install(TARGETS poppler RUNTIME DESTINATION bin LIBRARY DESTINATION lib${LIB_SUFFIX} ARCHIVE DESTINATION lib${LIB_SUFFIX})
@@ -460,6 +464,7 @@ if(ENABLE_XPDF_HEADERS)
     poppler/Link.h
     poppler/Linearization.h
     poppler/LocalPDFDocBuilder.h
+    poppler/MarkedContentOutputDev.h
     poppler/Movie.h
     poppler/NameToCharCode.h
     poppler/Object.h
@@ -480,6 +485,8 @@ if(ENABLE_XPDF_HEADERS)
     poppler/Rendition.h
     poppler/Stream-CCITT.h
     poppler/Stream.h
+    poppler/StructElement.h
+    poppler/StructTreeRoot.h
     poppler/UnicodeMap.h
     poppler/UnicodeMapTables.h
     poppler/UnicodeTypeTable.h
@@ -528,6 +535,11 @@ if(ENABLE_XPDF_HEADERS)
       goo/TiffWriter.h
       DESTINATION include/poppler/goo)
   endif(TIFF_FOUND)
+  if(JPEG_FOUND)
+    install(FILES
+      goo/JpegWriter.h
+      DESTINATION include/poppler/goo)
+  endif(JPEG_FOUND)
   install(FILES
     fofi/FoFiBase.h
     fofi/FoFiEncodings.h
@@ -546,9 +558,6 @@ if(ENABLE_XPDF_HEADERS)
     install(FILES
       poppler/JPEG2000Stream.h
       DESTINATION include/poppler)
-    install(FILES
-      goo/JpegWriter.h
-      DESTINATION include/poppler/goo)
   else(LIBOPENJPEG_FOUND)
     install(FILES
       poppler/JPXStream.h

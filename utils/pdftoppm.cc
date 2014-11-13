@@ -25,6 +25,7 @@
 // Copyright (C) 2010 William Bader <williambader@hotmail.com>
 // Copyright (C) 2011-2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
+// Copyright (C) 2013 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -94,6 +95,8 @@ static char vectorAntialiasStr[16] = "";
 static char ownerPassword[33] = "";
 static char userPassword[33] = "";
 static char TiffCompressionStr[16] = "";
+static char thinLineModeStr[8] = "";
+static SplashThinLineMode thinLineMode = splashThinLineDefault;
 #ifdef UTILS_USE_PTHREADS
 static int numberOfJobs = 1;
 #endif // UTILS_USE_PTHREADS
@@ -169,6 +172,8 @@ static const ArgDesc argDesc[] = {
   {"-freetype",   argString,      enableFreeTypeStr, sizeof(enableFreeTypeStr),
    "enable FreeType font rasterizer: yes, no"},
 #endif
+  {"-thinlinemode", argString, thinLineModeStr, sizeof(thinLineModeStr),
+   "set thin line mode: none, solid, shape. Default: none"},
   
   {"-aa",         argString,      antialiasStr,   sizeof(antialiasStr),
    "enable font anti-aliasing: yes, no"},
@@ -283,7 +288,7 @@ static void processPageJobs() {
 #if SPLASH_CMYK
         			    (jpegcmyk || overprint) ? splashModeDeviceN8 :
 #endif
-		              splashModeRGB8, 4, gFalse, *pageJob.paperColor);
+		              splashModeRGB8, 4, gFalse, *pageJob.paperColor, gTrue, gTrue, thinLineMode);
     splashOut->startDoc(pageJob.doc);
     
     savePageSlice(pageJob.doc, splashOut, pageJob.pg, x, y, w, h, pageJob.pg_w, pageJob.pg_h, pageJob.ppmFile);
@@ -368,6 +373,15 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "Bad '-aaVector' value on command line\n");
     }
   }
+  if (thinLineModeStr[0]) {
+    if (strcmp(thinLineModeStr, "solid") == 0) {
+      thinLineMode = splashThinLineSolid;
+    } else if (strcmp(thinLineModeStr, "shape") == 0) {
+      thinLineMode = splashThinLineShape;
+    } else if (strcmp(thinLineModeStr, "none") != 0) {
+      fprintf(stderr, "Bad '-thinlinemode' value on command line\n");
+    }
+  }
   if (quiet) {
     globalParams->setErrQuiet(quiet);
   }
@@ -412,6 +426,12 @@ int main(int argc, char *argv[]) {
     lastPage = firstPage;
   if (lastPage < 1 || lastPage > doc->getNumPages())
     lastPage = doc->getNumPages();
+  if (lastPage < firstPage) {
+    fprintf(stderr,
+            "Wrong page range given: the first page (%d) can not be after the last page (%d).\n",
+            firstPage, lastPage);
+    goto err1;
+  }
 
   if (singleFile && firstPage < lastPage) {
     if (!quiet) {
@@ -444,7 +464,7 @@ int main(int argc, char *argv[]) {
 				    (jpegcmyk || overprint) ? splashModeDeviceN8 :
 #endif
 				             splashModeRGB8, 4,
-				  gFalse, paperColor);
+				  gFalse, paperColor, gTrue, gTrue, thinLineMode);
   splashOut->startDoc(doc);
   
 #endif // UTILS_USE_PTHREADS

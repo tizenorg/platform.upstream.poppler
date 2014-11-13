@@ -4,7 +4,7 @@
 //
 // This file is licensed under the GPLv2 or later
 //
-// Copyright (C) 2011, 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2011-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012 Arseny Solokha <asolokha@gmx.com>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012 Albert Astals Cid <aacid@kde.org>
@@ -12,6 +12,7 @@
 // Copyright (C) 2013 Hib Eris <hib@hiberis.nl>
 //
 //========================================================================
+
 #include <PDFDoc.h>
 #include <GlobalParams.h>
 #include "parseargs.h"
@@ -60,7 +61,7 @@ int main (int argc, char *argv[])
 
   exitCode = 99;
   const GBool ok = parseArgs (argDesc, &argc, argv);
-  if (!ok || argc <= 3 || printVersion || printHelp) {
+  if (!ok || argc < 3 || printVersion || printHelp) {
     fprintf(stderr, "pdfunite version %s\n", PACKAGE_VERSION);
     fprintf(stderr, "%s\n", popplerCopyright);
     fprintf(stderr, "%s\n", xpdfCopyright);
@@ -119,10 +120,22 @@ int main (int argc, char *argv[])
       Ref *refPage = docs[i]->getCatalog()->getPageRef(j);
       Object page;
       docs[i]->getXRef()->fetch(refPage->num, refPage->gen, &page);
+      Dict *pageDict = page.getDict();
+      Dict *resDict = docs[i]->getCatalog()->getPage(j)->getResourceDict();
+      if (resDict) {
+        Object *newResource = new Object();
+        newResource->initDict(resDict);
+        pageDict->set("Resources", newResource);
+      }
       pages.push_back(page);
       offsets.push_back(numOffset);
-      Dict *pageDict = page.getDict();
       docs[i]->markPageObjects(pageDict, yRef, countRef, numOffset);
+      Object annotsObj;
+      pageDict->lookupNF("Annots", &annotsObj);
+      if (!annotsObj.isNull()) {
+        docs[i]->markAnnotations(&annotsObj, yRef, countRef, numOffset, refPage->num, refPage->num);
+        annotsObj.free();
+      }
     }
     objectsCount += docs[i]->writePageObjects(outStr, yRef, numOffset, gTrue);
     numOffset = yRef->getNumObjects() + 1;
