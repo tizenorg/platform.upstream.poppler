@@ -56,7 +56,7 @@ developed by Derek Noonburg of Glyph and Cog, LLC.
 Summary:        PDF Rendering Library Tools
 License:        GPL-2.0
 Group:          Graphics & UI Framework/Imaging
-Requires:       %{libname} >= %{version}
+Requires:       %{libname} >= %{version}-%{release}
 # last version in openSUSE 11.1/SLE11
 Provides:       poppler-tools = %{version}
 Obsoletes:      xpdf-tools < 3.02-10mdv
@@ -116,8 +116,8 @@ Summary:        Development files for %{name}'s glib binding
 License:        GPL-2.0
 Group:          Graphics & UI Framework/Imaging
 Provides:       %{name}-glib-devel = %{version}-%{release}
-Requires:       %{libnameglib} = %{version}
-Requires:       %{libnamedev} = %{version}
+Requires:       %{libnameglib} = %{version}-%{release}
+Requires:       %{libnamedev} = %{version}-%{release}
 Conflicts:      %{libnamedev} < %{version}-%{release}
 Obsoletes:      %{libnameglib}-devel
 
@@ -129,8 +129,8 @@ Development files for %{name}'s glib binding package.
 Summary:        Development files for %{name}-cpp
 Group:          Graphics & UI Framework/Imaging
 Provides:       %{name}-cpp-devel = %{version}-%{release}
-Requires:       %{libnamecpp} = %{version}
-Requires:       %{libnamedev} = %{version}
+Requires:       %{libnamecpp} = %{version}-%{release}
+Requires:       %{libnamedev} = %{version}-%{release}
 
 %description -n %{libnamecppdev}
 Development files for %{name}-cpp.
